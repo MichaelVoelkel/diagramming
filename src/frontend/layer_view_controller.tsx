@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { Label, Rect, Stage, Text, Layer } from "react-konva";
+import LayerController from "../app/layer_controller";
 import Entity from "../model/entity";
-import ModelLayer from "../model/layer"
 
 interface Props {
-    layer: ModelLayer;
+    layerController: LayerController;
 }
 
 export default function LayerViewController(props: Props) {
-    const layer = props.layer;
+    const layerController = props.layerController;
 
     const [entities, setEntities] = useState([] as Entity[]);
     
-    layer.entityChanged.connect(() => {
-        setEntities([...layer.getEntities()]);
+    layerController.layerChanged.connect(() => {
+        setEntities([...layerController.getEntities()]);
         console.log("changed")
     }
         )
@@ -22,11 +22,7 @@ export default function LayerViewController(props: Props) {
         <Stage width={window.innerWidth} height={window.innerHeight}>
             <Layer>
                 <Label x={0} y={0} width={100} height={20} fill="brown" onClick={
-                    () => {layer.addEntity(new Entity(
-                        'someID',
-                        'someLabel',
-                        10, 20, 30, 40
-                    ));
+                    () => {layerController.addEntity("hi");
                     console.log(entities.length);
                     }
                 }><Text text={ String(entities.length) } />
