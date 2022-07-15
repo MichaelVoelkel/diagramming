@@ -1,17 +1,25 @@
-import React from 'react'
-import Entity from '../model/entity'
-import LayerViewController from './layer_view_controller'
-import connection from '../model/connection'
-import LayerController from '../app/layer_controller';
-import Layer from '../model/layer';
-
-
+import React, { useEffect, useState } from 'react'
+import {LayerViewController, LayerViewControllerProps} from './view_controller/layer_view_controller'
+import LayerController from '../app/layer_controller'
+import LocalStorageLayerRepository from '../infra/repository/local_storage_layer_repository';
+import Layer from '../model/layer/layer';
 
 export default function App() {
-    console.log("init");
+    const [layerController, setLayerController] = useState<LayerController>();
 
-    const layer = new Layer([], []);
-    const layerController = new LayerController(layer);
+    useEffect(() => {
+        (async () => {
+            const some = LayerController.create(new LocalStorageLayerRepository());
+            some.then(value => setLayerController(value));
+            some.catch(_ => console.log("damn"));
+        })();
+        
+    }, [setLayerController]);
 
-    return <div><LayerViewController layerController={layerController} /></div>;
+    return <React.Fragment>{layerController != undefined ? 
+        (<LayerViewController layerController={layerController!} />)
+        :
+            <div>Loading</div>
+        }
+        </React.Fragment>
 }
