@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Label, Rect, Stage, Text, Layer, Group } from "react-konva";
+import React, { useRef, useState, RefObject } from "react";
+import Konva from "konva";
+import { Label, Stage, Rect, Text, Layer, Group, Transformer } from "react-konva";
 import LayerController from "../../app/layer_controller";
 import {v4 as uuidv4} from 'uuid';
 export interface LayerViewControllerProps {
@@ -25,12 +26,25 @@ export function LayerViewController(props: LayerViewControllerProps) {
                     </Label>
 
                 {
-                    entities.map((entity) =>
-                        <Group key={entity.id}>
-                        <Rect x={entity.x} y={entity.y} width={entity.width} height={entity.height} fill="red" />
-                        <Text align="center" verticalAlign="middle" x={entity.x} y={entity.y} width={entity.width} height={entity.height} text={entity.label} /> 
+                    entities.map((entity) => {
+                        console.log(typeof Group);
+                        const rect: RefObject<Konva.Rect> = useRef(null);
+                        const transformer: RefObject<Konva.Transformer> = useRef(null);
+
+                        return <Group key={entity.id} draggable={true}
+                        x={entity.x} y={entity.y}
+                        width={entity.width} height={entity.height}
+                        onClick={_ => transformer.current?.nodes([rect.current!])}
+                        onDragStart={_ => console.log("started")}
+                        onDragEnd={evt => layerController.moveEntityTo(entity.id, evt.currentTarget.x(), evt.currentTarget.y())}
+                        >
+                        <React.Fragment>
+                            <Rect ref={rect} width={entity.width} height={entity.height} fill="red" />
+                            <Transformer ref={transformer} /> 
+                        </React.Fragment>
+                        <Text align="center" verticalAlign="middle" width={entity.width} height={entity.height} text={entity.label} /> 
                         </Group>
-                    )
+                    })
                 }
             </Layer>
         </Stage>

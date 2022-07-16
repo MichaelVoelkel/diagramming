@@ -48,6 +48,13 @@ export default class LayerController {
         this.layerChanged.emit();
     }
 
+    moveEntityTo(id: string, x: number, y: number) {
+        this.layer.moveEntityTo(id, x, y);
+
+        this.layerRepository.save(this.layer);
+        this.layerChanged.emit();
+    }
+
     getEntities() : Entity[] {
         return this.layer.getEntities();
     }

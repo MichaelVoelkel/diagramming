@@ -43,6 +43,15 @@ export default class Layer {
         );
     }
 
+    moveEntityTo(id: string, x: number, y: number) {
+        this.entities.forEach(entity => {
+            if(entity.id == id) {
+                entity.x = x;
+                entity.y = y;
+            }
+        });
+    }
+
     rearrange() {
         this.entities.forEach(
             (value: Entity) => {
